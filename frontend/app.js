@@ -244,7 +244,7 @@ function renderList() {
                                         <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold flex-shrink-0 capitalize ${diaStyle} border-transparent w-24 justify-center">
                                             ${schedule.diaSemana}
                                         </div>
-                                        <time class="w-16 flex-shrink-0 font-mono text-xs text-muted-foreground">
+                                        <time class="w-28 whitespace-nowrap flex-shrink-0 font-mono text-xs text-muted-foreground">
                                             ${schedule.horario}
                                         </time>
                                         <p class="flex-1 truncate text-sm text-foreground font-medium">
