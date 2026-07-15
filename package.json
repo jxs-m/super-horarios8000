@@ -1,0 +1,15 @@
+{
+  "name": "iffar-academic-api",
+  "version": "1.0.0",
+  "description": "API de Gerenciamento Acadêmico e de Horários do IFFar",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^8.5.1"
+  }
+}
