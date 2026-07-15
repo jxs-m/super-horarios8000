@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horários - Grade Regular</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(240 3.7% 15.9%)",
+                        input: "hsl(240 3.7% 15.9%)",
+                        ring: "hsl(240 4.9% 83.9%)",
+                        background: "hsl(240 10% 3.9%)",
+                        foreground: "hsl(0 0% 98%)",
+                        primary: {
+                            DEFAULT: "hsl(0 0% 98%)",
+                            foreground: "hsl(240 5.9% 10%)",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(240 3.7% 15.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(0 62.8% 30.6%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(240 3.7% 15.9%)",
+                            foreground: "hsl(240 5% 64.9%)",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(240 3.7% 15.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        card: {
+                            DEFAULT: "hsl(240 10% 3.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: hsl(240 10% 3.9%);
+            color: hsl(0 0% 98%);
+        }
+        
+        .row-details {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+        }
+
+        .row-details.expanded {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .chevron {
+            transition: transform 0.2s ease;
+        }
+
+        .chevron.expanded {
+            transform: rotate(180deg);
+        }
+
+        .filter-panel {
+            width: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: width 0.3s ease, opacity 0.3s ease;
+        }
+
+        .filter-panel.open {
+            width: 280px;
+            opacity: 1;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: hsl(240 10% 3.9%); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: hsl(240 3.7% 15.9%); 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: hsl(240 5% 64.9%); 
+        }
+    </style>
+</head>
+<body class="h-screen w-full font-sans antialiased">
+    <main class="h-full flex flex-col">
+        <div class="border-b border-border bg-card p-6 flex-shrink-0">
+            <div class="space-y-4">
+                <div>
+                    <h1 class="text-2xl font-semibold text-foreground">Grade Regular</h1>
+                    <p class="text-sm text-muted-foreground">
+                        <span id="logs-count">0</span> de <span id="total-logs-count">0</span> horários
+                    </p>
+                </div>
+
+                <div class="flex gap-2">
+                    <div class="relative flex-1">
+                        <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"></i>
+                        <input
+                            id="search-input"
+                            type="text"
+                            placeholder="Buscar por disciplina ou turma..."
+                            class="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pl-9"
+                        />
+                    </div>
+                    <button
+                        id="toggle-filters-btn"
+                        class="relative inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+                    >
+                        <i data-lucide="filter" class="h-4 w-4"></i>
+                        <span id="active-filters-badge" class="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center p-0 text-[10px] bg-destructive text-destructive-foreground rounded-full hidden">
+                            0
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-1 overflow-hidden">
+            <div id="filter-panel" class="filter-panel border-r border-border bg-card flex-shrink-0 h-full">
+                <div class="flex h-full flex-col space-y-6 overflow-y-auto p-4 w-[280px]">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-semibold text-foreground">Filtros</h3>
+                        <button id="clear-filters-btn" class="hidden inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-6 px-2 text-muted-foreground">
+                            Limpar
+                        </button>
+                    </div>
+
+                    <div id="filters-container" class="space-y-6"></div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto">
+                <div id="list-container" class="divide-y divide-border">
+                    <div class="p-12 text-center text-muted-foreground">Carregando dados...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
