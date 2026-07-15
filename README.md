@@ -24,7 +24,7 @@ API de gerenciamento acadêmico e de horários para o IFFar, desenvolvida com No
 1. Clone o repositório:
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/jxs-m/super-horarios8000.git
 cd super-horarios8000-main
 ```
 
